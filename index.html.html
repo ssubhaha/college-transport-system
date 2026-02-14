@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>College Transport Information System</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Segoe UI,Arial;
+    background:#0b0b0b;
+    color:#fff;
+}
+
+/* WATERMARK */
+body::before{
+    content:"R.M.K Group of Institutions";
+    position:fixed;
+    top:45%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-25deg);
+    font-size:60px;
+    color:rgba(255,255,255,0.04);
+    pointer-events:none;
+}
+
+/* HEADER */
+header{
+    background:linear-gradient(135deg,#ffca28,#ff9100);
+    color:#000;
+    padding:18px;
+    text-align:center;
+    font-size:26px;
+    font-weight:bold;
+}
+
+/* CONTAINER */
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:25px;
+}
+
+.box{
+    background:#151515;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(255,202,40,0.25);
+    margin-bottom:25px;
+}
+
+.box h3{color:#ffca28;margin-top:0;}
+
+select,button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    background:#2a2a2a;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button{
+    background:linear-gradient(135deg,#00e5ff,#1de9b6);
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* SHIFT BUS */
+.shift{display:flex;gap:20px;}
+.bus-check{
+    background:#333;
+    padding:12px 22px;
+    border-radius:40px;
+    cursor:pointer;
+    font-weight:bold;
+}
+.bus-check.active{background:#ffca28;color:black;}
+
+/* LOADING SCREEN */
+#loading{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000;
+    z-index:999;
+    overflow:hidden;
+}
+
+/* BIG BUS */
+.big-bus{
+    position:absolute;
+    top:42%;
+    font-size:120px;
+    animation:drive 5s linear forwards;
+}
+
+/* HEAVY SMOKE */
+.smoke{
+    position:absolute;
+    font-size:30px;
+    opacity:0.8;
+    animation:smokeMove 5s linear forwards;
+}
+
+@keyframes drive{
+    from{left:-200px;}
+    to{left:100%;}
+}
+
+@keyframes smokeMove{
+    from{left:-200px;opacity:1;}
+    to{left:85%;opacity:0;}
+}
+
+/* RESULT */
+#result{display:none;}
+
+.bus-card{
+    background:#ffca28;
+    color:#000;
+    padding:20px;
+    border-radius:40px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.map{
+    background:#111;
+    border:2px dashed #ffca28;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.stop{
+    display:inline-block;
+    background:#ffca28;
+    color:black;
+    padding:10px 16px;
+    border-radius:20px;
+    margin:6px;
+}
+
+.arrow{font-size:22px;color:#00e5ff;}
+</style>
+</head>
+
+<body>
+
+<header>🚌 College Transport Information System</header>
+
+<div class="container" id="formPage">
+
+    <div class="box">
+        <h3>Bus Shift</h3>
+        <div class="shift">
+            <div class="bus-check active" onclick="setShift(this)">🚌 Morning</div>
+            <div class="bus-check" onclick="setShift(this)">🚌 Evening</div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h3>Institution</h3>
+        <select id="college">
+            <option>R.M.K Engineering College</option>
+            <option>R.M.D Engineering College</option>
+            <option>R.M.K College of Technology</option>
+        </select>
+    </div>
+
+    <div class="box">
+        <h3>Departure From</h3>
+        <select id="from">
+            <option>Institution</option>
+            <option>City Center</option>
+            <option>Railway Station</option>
+            <option>MKB Nagar</option>
+            <option>Thambu Chetty Street</option>
+            <option>Mint</option>
+        </select>
+    </div>
+
+    <div class="box">
+        <h3>Arrival To</h3>
+        <select id="to">
+            <option>Institution</option>
+            <option>City Center</option>
+            <option>Railway Station</option>
+            <option>MKB Nagar</option>
+            <option>Thambu Chetty Street</option>
+            <option>Mint</option>
+        </select>
+    </div>
+
+    <button onclick="startLoading()">Find Bus Route</button>
+</div>
+
+<!-- LOADING -->
+<div id="loading">
+    <div class="big-bus">🚌</div>
+    <div class="smoke" style="top:48%">💨💨💨💨</div>
+    <div class="smoke" style="top:52%">💨💨💨</div>
+    <div class="smoke" style="top:56%">💨💨</div>
+</div>
+
+<!-- RESULT -->
+<div class="container" id="result">
+    <div class="bus-card">🚌 Route No: 101 | Timing: 7:30 AM</div>
+    <div class="map" id="map"></div>
+</div>
+
+<script>
+function setShift(el){
+    document.querySelectorAll('.bus-check').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+/* BUS HORN SOUND (OFFLINE) */
+function playHorn(){
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type="sawtooth";
+    osc.frequency.setValueAtTime(220, ctx.currentTime);
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime+0.8);
+    osc.stop(ctx.currentTime+1);
+}
+
+function startLoading(){
+    playHorn();
+    document.getElementById("formPage").style.display="none";
+    document.getElementById("loading").style.display="block";
+
+    setTimeout(()=>{
+        document.getElementById("loading").style.display="none";
+        showResult();
+    },5000);
+}
+
+function showResult(){
+    document.getElementById("result").style.display="block";
+    const from=document.getElementById("from").value;
+    const to=document.getElementById("to").value;
+
+    const path=[from,"Railway Station","MKB Nagar",to];
+    const map=document.getElementById("map");
+    map.innerHTML="";
+
+    path.forEach((p,i)=>{
+        map.innerHTML+=`<span class="stop">${p}</span>`;
+        if(i<path.length-1) map.innerHTML+=`<span class="arrow">➡️</span>`;
+    });
+}
+</script>
+
+</body>
+</html>
