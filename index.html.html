@@ -15,27 +15,34 @@ body{
 /* HEADER */
 header{
     background:#1b5e20;
-    padding:18px 0;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-.header-content{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.title{
     color:white;
+    padding:22px;
+    text-align:center;
     font-size:26px;
     font-weight:600;
     letter-spacing:1px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* TOP BUS */
+.top-bus{
+    text-align:center;
+    font-size:60px;
+    margin-top:25px;
+    animation:floatBus 2s ease-in-out infinite;
+}
+
+@keyframes floatBus{
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(-6px);}
+    100%{transform:translateY(0px);}
 }
 
 /* MAIN CONTAINER */
 .container{
     max-width:950px;
     margin:40px auto;
+    margin-left:220px;
     padding:35px;
     background:#f9fdf9;
     border-radius:18px;
@@ -225,10 +232,10 @@ button:hover{
 <body>
 
 <header>
-    <div class="header-content">
-        <span class="title">R.M.K Group of Institution 🚌 Campus Transit Hub</span>
-    </div>
-</header>
+<div class="header-content">
+   <span class="title">R.M.K Group of Institution 🚌 Campus Transit Hub</header>
+
+<div class="top-bus">🚌</div>
 
 <div class="container" id="formPage">
 
@@ -305,7 +312,7 @@ function startLoading(){
     setTimeout(()=>{
         document.getElementById("loading").style.display="none";
         showResult();
-    },3000);  // 3 seconds loading
+    },3000);
 }
 
 function showResult(){
@@ -327,3 +334,4 @@ function showResult(){
 
 </body>
 </html>
+   
