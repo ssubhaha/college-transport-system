@@ -232,18 +232,27 @@ button:hover{
 <body>
 
 <header>
-<div class="header-content">
-   <span class="title">R.M.K Group of Institution 🚌 Campus Transit Hub</header>
+R.M.K Group of Institution 🚌 Campus Transit Hub
+</header>
 
 <div class="top-bus">🚌</div>
 
 <div class="container" id="formPage">
 
+<!-- BUS SHIFT FIRST -->
 <h3>Bus Shift</h3>
 <div class="shift">
     <div class="bus-check active" onclick="setShift(this)">Morning</div>
     <div class="bus-check" onclick="setShift(this)">Evening</div>
 </div>
+
+<!-- INSTITUTION SECOND -->
+<h3>Institution</h3>
+<select id="institution">
+    <option>R.M.K Engineering College</option>
+    <option>R.M.D Engineering College</option>
+    <option>R.M.K College of Technology</option>
+</select>
 
 <h3>Departure From</h3>
 <select id="from">
@@ -334,4 +343,4 @@ function showResult(){
 
 </body>
 </html>
-   
+     
